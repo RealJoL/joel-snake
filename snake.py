@@ -23,6 +23,7 @@ class Snake:
         self.game_lost = False
         self.last_input = queue.Queue()
         self.score_point = [21, 21]
+        self.score = 0
 
     def start_game(self):
         self.playing_field[10, 10] = 1
@@ -45,12 +46,15 @@ class Snake:
         return self.game_lost
 
     def set_directions(self, direct):
-        if abs(self.current_move - direct) == 2:
+        if abs(self.current_move - direct) == 2: # buggy cur_move=left -> move=down -> move=right possible
             return
         self.current_move = direct
 
     def get_playing_field(self):
         return self.playing_field
+
+    def get_score(self):
+        return self.score
 
     def listen_to_me(self):
         listener = listen_here_you.Listener(self)
@@ -78,6 +82,7 @@ class Snake:
 
             if self.head == self.score_point:
                 self.place_point()
+                self.score += 20
                 continue
 
             move2remove = self.last_input.get()
@@ -88,6 +93,7 @@ class Snake:
                 self.tail[part] += 1
             else:
                 self.tail[part] -= 1
+            self.score -= 1
 
     def place_point(self):
         self.score_point = [np.random.randint(0, 20), np.random.randint(0, 20)]
